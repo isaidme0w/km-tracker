@@ -12,7 +12,26 @@ import cyclesRouter from './routes/cycles'
 export function createApp(): express.Express {
   const app = express()
 
-  app.use(helmet())
+  // Helmet's defaults assume HTTPS. When serving directly over plain HTTP (a
+  // non-trustworthy host such as 192.168.x.x), its HSTS header forces the
+  // browser to upgrade every request to https:// and its CSP
+  // "upgrade-insecure-requests" rewrites asset URLs to https://, which then
+  // fail with ERR_SSL_PROTOCOL_ERROR. Disable both so HTTP fronts work like
+  // they do on localhost (where browsers exempt the loopback address).
+  app.use(
+    helmet({
+      hsts: false,
+      contentSecurityPolicy: {
+        directives: {
+          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          // Allow the inline dark-mode-prevention script in index.html.
+          'script-src': ["'self'", "'sha256-tvs92BQjfDU4ZLifk+hpwzAUpKxF6ps2ndzMALGYgxM='"],
+          // Do not force browser to rewrite http:// subresources to https://.
+          'upgrade-insecure-requests': null,
+        },
+      },
+    }),
+  )
   app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }))
   app.use(express.json())
 
