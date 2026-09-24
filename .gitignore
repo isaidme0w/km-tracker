@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Planning documents
+plans/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# SQLite runtime data
+server/data/*.sqlite
+server/data/*.sqlite-journal
+server/data/*.sqlite-wal
+server/data/*.sqlite-shm
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,48 @@
+{
+  "name": "km-tracker-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "db:migrate": "tsx src/db.ts",
+    "db:seed": "tsx src/db.ts seed",
+    "db:setup": "tsx src/db.ts setup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.6.2",
+    "@types/supertest": "^7.2.1",
+    "@typescript-eslint/eslint-plugin": "^8.70.1",
+    "@typescript-eslint/parser": "^8.70.1",
+    "eslint": "^10.11.0",
+    "supertest": "^7.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.3",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "zod": "^4.6.5"
+  }
+}
