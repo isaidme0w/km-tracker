@@ -1,4 +1,5 @@
 import express, { type NextFunction, type Request, type Response } from 'express'
+import path from 'node:path'
 import helmet from 'helmet'
 import cors from 'cors'
 import { env } from './config/env'
@@ -23,6 +24,22 @@ export function createApp(): express.Express {
   app.use('/api/users', usersRouter)
   app.use('/api/odometer', odometerRouter)
   app.use('/api/cycles', cyclesRouter)
+
+  // In production only, serve the built client (client/dist) and fall back to
+  // index.html for SPA routes. In development the Vite dev server handles this.
+  if (env.NODE_ENV === 'production') {
+    const clientDist = path.resolve(__dirname, '../../client/dist')
+    app.use(express.static(clientDist))
+    // SPA fallback: serve index.html for any non-API route not matched above
+    // (Express 5 removed the bare '*' wildcard, so use plain middleware).
+    app.use((req, res, next) => {
+      if (req.path.startsWith('/api') || req.method !== 'GET') {
+        next()
+        return
+      }
+      res.sendFile(path.join(clientDist, 'index.html'))
+    })
+  }
 
   // JSON 404 fallback for unmatched routes.
   app.use((_req: Request, res: Response) => {

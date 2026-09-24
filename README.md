@@ -139,38 +139,32 @@ openssl rand -hex 48
 ### 3. Uruchom serwer
 
 ```bash
-# W katalogu server/ (produkcyjny start ze skompilowanego dist)
+# Z katalogu root
+npm start
+
+# …lub równoważnie, tylko workspace serwera
 npm run start --workspace server
 ```
 
 Backend uruchomi się z [`server/dist/index.js`](server/dist/index.js), ponownie zastosuje migracje i seed.
 
-### 4. Serwuj frontend i reverse proxy
+### 4. Serwowanie frontendu
 
-W produkcji frontend (pliki statyczne w `client/dist`) oraz backend (`/api`) muszą być dostępne **pod tą samą domeną**, ponieważ klient używa względnego `baseURL: '/api'`. Zalecane jest postawienie reverse proxy (Nginx/Caddy), które:
+W produkcji (`NODE_ENV=production`) backend sam serwuje zbudowany frontend z `client/dist` pod tą samą domeną i portem — dzięki czemu `npm start` wystarcza, aby pod `http://localhost:3001` (lub pod domeną) działała cała aplikacja. Routing SPA (np. `/history`, `/profile`) obsługuje fallback na `index.html` (patrz [`server/src/app.ts`](server/src/app.ts)).
 
-1. Serwuje statykę z `client/dist`.
-2. Przekazuje żądania `/api` do backendu na porcie `3001`.
-3. Dostarcza HTTPS.
+Klient używa względnego `baseURL: '/api'` (patrz [`client/src/api.ts`](client/src/api.ts)), więc frontend i API muszą być dostępne pod tą samą domeną. Domyślne serwowanie przez backend to realizuje bez dodatkowej konfiguracji.
 
-#### Przykład konfiguracji Nginx
+#### Opcjonalnie: reverse proxy (Nginx/Caddy)
+
+Jeśli wolisz serwować statykę i HTTPS na zewnętrznym reverse proxy, możesz przekierować cały ruch na backend:
 
 ```nginx
 server {
     listen 80;
     server_name twoja-domena.pl;
 
-    # Frontend (pliki statyczne)
-    root /srv/km-tracker/client/dist;
-    index index.html;
-
-    # SPA fallback
+    # Cały ruch (statyka + API) -> backend Express
     location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # API -> backend
-    location /api/ {
         proxy_pass http://127.0.0.1:3001;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
@@ -181,7 +175,7 @@ server {
 }
 ```
 
-> Po zmianie `CORS_ORIGIN` na właściwą domenę, żądania z tej samej domeny nie będą blokowane przez CORS.
+> W tym wariancie backend nadal obsługuje statykę, a Nginx (lub Caddy) pełni rolę terminatora HTTPS / load balancera. Po zmianie `CORS_ORIGIN` na właściwą domenę, żądania z tej samej domeny nie będą blokowane przez CORS.
 
 ### 5. Uruchamianie jako usługa (systemd)
 
