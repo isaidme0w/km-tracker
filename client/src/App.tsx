@@ -125,6 +125,13 @@ function NavBar() {
           >
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
+          <Link
+            to="/profile"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+          >
+            <User className="h-4 w-4" />
+            <span className="max-w-[8rem] truncate">{user?.username}</span>
+          </Link>
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
@@ -134,13 +141,6 @@ function NavBar() {
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
-          <Link
-            to="/profile"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
-          >
-            <User className="h-4 w-4" />
-            <span className="max-w-[8rem] truncate">{user?.username}</span>
-          </Link>
           <button
             type="button"
             onClick={logout}
